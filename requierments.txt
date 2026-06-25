@@ -1,0 +1,10 @@
+# Requirements list for the Tech News AI test environment.
+# Dictates pinned package dependencies for reproducibility.
+
+crawl4ai>=0.3.0
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+
+# Library interface responsible for downloading and managing Chromium binaries
+playwright>=1.40.0
+feedparser>=6.0.10
