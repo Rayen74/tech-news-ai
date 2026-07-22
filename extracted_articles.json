@@ -1,0 +1,108 @@
+[
+  {
+    "title": "Codeberg: ToU extension to prohibit LLM-extrusions",
+    "url": "https://codeberg.org/Codeberg/org/pulls/1253",
+    "source": "Hacker News",
+    "summary": "Article URL: https://codeberg.org/Codeberg/org/pulls/1253\nComments URL: https://news.ycombinator.com/item?id=49003465\nPoints: 3\n# Comments: 1"
+  },
+  {
+    "title": "I graded 36 popular MCP servers on agent usability. A third got a D or F",
+    "url": "https://tengli.dev/posts/mcp-servers-failing-agents.html",
+    "source": "Hacker News",
+    "summary": "Article URL: https://tengli.dev/posts/mcp-servers-failing-agents.html\nComments URL: https://news.ycombinator.com/item?id=49002358\nPoints: 11\n# Comments: 2"
+  },
+  {
+    "title": "Apple teams up with Klarna to launch a lease-to-own program for iPhones, iPads, and Macs",
+    "url": "https://techcrunch.com/2026/07/21/apple-teams-up-with-klarna-to-launch-a-lease-to-own-program-for-iphones-ipads-and-macs/",
+    "source": "TechCrunch",
+    "summary": "Apple has partnered with Klarna to introduce a lease-to-own program for its devices, allowing customers to pay for iPhones, iPads, and Macs over time.",
+    "error": false
+  },
+  {
+    "title": "Data centers expected to use 4x more electricity by 2035",
+    "url": "https://techcrunch.com/2026/07/21/data-centers-expected-to-use-4x-more-electricity-by-2035/",
+    "source": "TechCrunch",
+    "summary": "The energy consumption of data centers is projected to increase fourfold by 2035, driven by the growing demand for cloud computing and storage.",
+    "error": false
+  },
+  {
+    "title": "Range Rover answers the question: \"What if we built a not-SUV?\"",
+    "url": "https://arstechnica.com/cars/2026/07/heres-range-rovers-first-not-suv-the-range-rover-gt/",
+    "source": "Ars Technica",
+    "summary": "The Range Rover GT will debut as an EV with a hybrid version to follow."
+  },
+  {
+    "title": "On the run for 20 years, most-wanted fugitive caught hiding as a biotech exec",
+    "url": "https://arstechnica.com/health/2026/07/on-the-run-for-20-years-most-wanted-fugitive-caught-hiding-as-a-biotech-exec/",
+    "source": "Ars Technica",
+    "summary": "Ronald Fischer, aka Richard Graydon, was arrested in New York last week."
+  },
+  {
+    "title": "Who\u2019s afraid of the big, bad GPU?",
+    "url": "https://www.theverge.com/cs/features/937356/ai-data-center-gpu-environmental-impact",
+    "source": "The Verge",
+    "summary": "This article discusses the environmental impact of AI's energy use, particularly focusing on the role of GPUs in data centers, and how this might change the way we think about computers.",
+    "error": false
+  },
+  {
+    "title": "The Light Flip is a minimalist flip phone with a point to prove",
+    "url": "https://www.theverge.com/gadgets/968563/light-flip-phone-price-specs",
+    "source": "The Verge",
+    "summary": "This article introduces the Light Flip, a minimalist flip phone, discussing its features, price, and specs, highlighting its unique point of difference in the market.",
+    "error": false
+  },
+  {
+    "title": "OpenAI's models broke containment and cyberattacked Hugging Face \u2014 what enterprises need to know",
+    "url": "https://venturebeat.com/security/openais-models-broke-containment-and-cyberattacked-hugging-face-what-enterprises-need-to-know",
+    "source": "VentureBeat",
+    "summary": "Yesterday afternoon, OpenAI and Hugging Face published a joint disclosure outlining a cybersecurity event that redefines the threat landscape for enterprise technology. During an internal benchmark ev..."
+  },
+  {
+    "title": "Poolside drops Laguna S 2.1, an open-weight coding model that beats rivals 10x its size",
+    "url": "https://venturebeat.com/infrastructure/poolside-drops-laguna-s-2-1-an-open-weight-coding-model-that-beats-rivals-10x-its-size",
+    "source": "VentureBeat",
+    "summary": "Poolside, the San Francisco AI lab that has spent most of its three-year existence quietly selling coding models to governments and defense agencies, released its most capable model to date on Tuesday..."
+  },
+  {
+    "title": "Smash bugs. Win prizes.",
+    "url": "https://dev.to/bugsmash?bb=263829",
+    "source": "Dev.to",
+    "summary": "DEV is hosting a bug smash event where developers can participate and win prizes, including Sentry skateboards.",
+    "error": false
+  },
+  {
+    "title": "Nuxt vs SvelteKit: What works better?",
+    "url": "https://dev.to/erikch/nuxt-vs-sveltekit-what-works-better-132h",
+    "source": "Dev.to",
+    "summary": "A comparison of Nuxt and SvelteKit, two popular frameworks for building web applications, to determine which one works better.",
+    "error": false
+  },
+  {
+    "title": "GKE Security Blueprint Joins Growing List of Cloud AI Frameworks",
+    "url": "https://www.infoq.com/news/2026/07/google-gke-ai-security-blueprint/",
+    "source": "InfoQ",
+    "summary": "Google has introduced a security blueprint for its Kubernetes Engine (GKE) to help organizations secure their cloud-based AI frameworks. The blueprint provides a set of best practices and recommendations for securing GKE deployments.",
+    "error": false
+  },
+  {
+    "title": "Android Studio Quail 2 Redesigns Agent Mode, Streamlines AI-Assisted Coding",
+    "url": "https://www.infoq.com/news/2026/07/android-studio-quail-2/",
+    "source": "InfoQ",
+    "summary": "Android Studio Quail 2 has been released with a redesigned agent mode that streamlines AI-assisted coding. The new version aims to improve the overall coding experience and provide more efficient AI-powered coding tools.",
+    "error": false
+  },
+  {
+    "title": "koala73 / worldmonitor",
+    "url": "https://github.com/koala73/worldmonitor",
+    "source": "GitHub Trending",
+    "summary": "Real-time global intelligence dashboard with AI-powered news aggregation, geopolitical monitoring, and infrastructure tracking in a unified situational awareness interface.",
+    "error": false
+  },
+  {
+    "title": "bojieli / ai-agent-book",
+    "url": "https://github.com/bojieli/ai-agent-book",
+    "source": "GitHub Trending",
+    "summary": "Open-source book on AI Agent design principles and engineering practices, including full text, compiled PDF, and accompanying code.",
+    "error": false
+  }
+]
