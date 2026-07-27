@@ -20,6 +20,8 @@ from dotenv import load_dotenv
 from crawl4ai import BrowserConfig, LLMConfig, AsyncWebCrawler, CrawlerRunConfig, CacheMode, LLMExtractionStrategy
 from models import TechNewsExtraction
 from scrapper import scrape_single_source
+from embeddings import generate_embeddings_batch, generate_embedding
+from database import upsert_articles, is_duplicate, normalize_url, calculate_content_hash
 
 # A list of standard User-Agents to rotate per run
 USER_AGENTS = [
@@ -169,15 +171,57 @@ async def test_pipeline():
             
             run_summary["total_articles"] = len(all_articles)
             
-            # Persist summary logs
+            # Persist local JSON backups
             with open("run_summary.json", "w", encoding="utf-8") as f:
                 json.dump(run_summary, f, indent=2)
             
             with open("extracted_articles.json", "w", encoding="utf-8") as f:
                 json.dump(all_articles, f, indent=2)
             
+            # ── Phase S1: Layered Deduplication + Embeddings + Supabase Storage ──
+            if all_articles:
+                print(f"\n🔍 [Deduplication] Checking {len(all_articles)} extracted articles for duplicates (Layers 1-3)...")
+                unique_articles = []
+
+                for i, article in enumerate(all_articles):
+                    title = article.get("title", "")
+                    summary = article.get("summary", "")
+                    url = normalize_url(article.get("url", ""))
+                    combined_text = f"{title}. {summary}"
+
+                    # Step 1: Generate embedding for Layer 3 semantic check
+                    print(f"  📐 [{i+1}/{len(all_articles)}] Generating embedding & checking dedup: {title[:50]}...")
+                    embedding = generate_embedding(combined_text)
+                    article["embedding"] = embedding
+
+                    # Step 2: Perform 3-Layer Deduplication Check (URL -> SHA-256 Hash -> Semantic Similarity > 0.88)
+                    dup_status, reason = is_duplicate(url, combined_text, embedding=embedding, threshold=0.88, day_window=30)
+
+                    if dup_status:
+                        print(f"  🚫 [Duplicate Filtered] {reason}")
+                    else:
+                        print(f"  ✨ [Accepted] Unique article: {title[:60]}")
+                        unique_articles.append(article)
+
+                print(f"\n📊 [Deduplication Summary] Kept {len(unique_articles)}/{len(all_articles)} unique articles.")
+
+                if unique_articles:
+                    # Step 3: Upsert unique articles to Supabase
+                    db_result = upsert_articles(unique_articles)
+                    run_summary["database"] = db_result
+                else:
+                    print("ℹ️ [Database] All harvested articles were duplicates. No new database writes performed.")
+                    run_summary["database"] = {"inserted": 0, "skipped": len(all_articles), "errors": []}
+
+                # Re-save run_summary with DB results
+                with open("run_summary.json", "w", encoding="utf-8") as f:
+                    json.dump(run_summary, f, indent=2)
+            # ─────────────────────────────────────────────────────────────────────
+            
             print("\n================ TEST RUN COMPLETED ================")
             print(f"Total unique articles extracted: {len(all_articles)}")
+            if 'db_result' in dir():
+                print(f"Database upserts: {db_result['inserted']} inserted, {db_result['skipped']} skipped, {len(db_result['errors'])} errors")
             print(f"Run Summary persisted to run_summary.json: {json.dumps(run_summary, indent=2)}")
             print("====================================================")
             

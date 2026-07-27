@@ -1,108 +1,92 @@
 [
   {
-    "title": "Codeberg: ToU extension to prohibit LLM-extrusions",
-    "url": "https://codeberg.org/Codeberg/org/pulls/1253",
+    "title": "Kimi-K3 Releases on HuggingFace 7/27",
+    "url": "https://huggingface.co/moonshotai/Kimi-K3",
     "source": "Hacker News",
-    "summary": "Article URL: https://codeberg.org/Codeberg/org/pulls/1253\nComments URL: https://news.ycombinator.com/item?id=49003465\nPoints: 3\n# Comments: 1"
+    "summary": "Kimi-K3 has been released on HuggingFace, a platform for machine learning models, and is now available for use. The release is significant as it makes the model more accessible to developers and researchers.",
+    "error": false
   },
   {
-    "title": "I graded 36 popular MCP servers on agent usability. A third got a D or F",
-    "url": "https://tengli.dev/posts/mcp-servers-failing-agents.html",
+    "title": "AI companies spend record sums on Washington lobbying",
+    "url": "https://www.ft.com/content/d8a5f95e-3b6d-463a-a848-c9ef8e2394db",
     "source": "Hacker News",
-    "summary": "Article URL: https://tengli.dev/posts/mcp-servers-failing-agents.html\nComments URL: https://news.ycombinator.com/item?id=49002358\nPoints: 11\n# Comments: 2"
+    "summary": "AI companies are spending record amounts on lobbying in Washington, indicating a growing influence of the industry in politics. The spending is likely aimed at shaping regulations and policies that affect the development and deployment of AI technologies.",
+    "error": false
   },
   {
-    "title": "Apple teams up with Klarna to launch a lease-to-own program for iPhones, iPads, and Macs",
-    "url": "https://techcrunch.com/2026/07/21/apple-teams-up-with-klarna-to-launch-a-lease-to-own-program-for-iphones-ipads-and-macs/",
+    "title": "Can Apple make smart glasses that aren\u2019t a constant privacy threat?",
+    "url": "https://techcrunch.com/2026/07/26/can-apple-make-smart-glasses-that-arent-a-constant-privacy-threat/",
     "source": "TechCrunch",
-    "summary": "Apple has partnered with Klarna to introduce a lease-to-own program for its devices, allowing customers to pay for iPhones, iPads, and Macs over time.",
+    "summary": "Apple is reportedly working on smart glasses, but concerns about privacy and data collection have raised questions about whether the company can make a product that balances functionality with user trust.",
     "error": false
   },
   {
-    "title": "Data centers expected to use 4x more electricity by 2035",
-    "url": "https://techcrunch.com/2026/07/21/data-centers-expected-to-use-4x-more-electricity-by-2035/",
+    "title": "Google\u2019s AI search is rapidly becoming the default, new data shows",
+    "url": "https://techcrunch.com/2026/07/27/googles-ai-search-is-rapidly-becoming-the-default-new-data-shows/",
     "source": "TechCrunch",
-    "summary": "The energy consumption of data centers is projected to increase fourfold by 2035, driven by the growing demand for cloud computing and storage.",
+    "summary": "Google's AI-powered search is gaining traction, with new data showing that it's becoming the default search engine for many users, potentially threatening the dominance of traditional search engines like Google's own.",
     "error": false
   },
   {
-    "title": "Range Rover answers the question: \"What if we built a not-SUV?\"",
-    "url": "https://arstechnica.com/cars/2026/07/heres-range-rovers-first-not-suv-the-range-rover-gt/",
+    "title": "What public health professionals can learn from anti-vaccine storytelling",
+    "url": "https://arstechnica.com/health/2026/07/how-emotionally-powerful-stories-fuel-vaccine-skepticism/",
     "source": "Ars Technica",
-    "summary": "The Range Rover GT will debut as an EV with a hybrid version to follow."
+    "summary": "Sometimes, compelling stories beat medical evidence."
   },
   {
-    "title": "On the run for 20 years, most-wanted fugitive caught hiding as a biotech exec",
-    "url": "https://arstechnica.com/health/2026/07/on-the-run-for-20-years-most-wanted-fugitive-caught-hiding-as-a-biotech-exec/",
+    "title": "Artist sues AI meme generator for selling deeply personal comic as ad template",
+    "url": "https://arstechnica.com/tech-policy/2026/07/artist-sues-ai-meme-generator-for-selling-deeply-personal-comic-as-ad-template/",
     "source": "Ars Technica",
-    "summary": "Ronald Fischer, aka Richard Graydon, was arrested in New York last week."
+    "summary": "Meme generator may have screwed up by using templates in outputs, expert says."
   },
   {
-    "title": "Who\u2019s afraid of the big, bad GPU?",
-    "url": "https://www.theverge.com/cs/features/937356/ai-data-center-gpu-environmental-impact",
+    "title": "YouTube Premium will include Peacock starting next year",
+    "url": "https://www.theverge.com/streaming/971452/youtube-premium-peacock-streaming-deal",
     "source": "The Verge",
-    "summary": "This article discusses the environmental impact of AI's energy use, particularly focusing on the role of GPUs in data centers, and how this might change the way we think about computers.",
-    "error": false
+    "summary": "YouTube's ad-free Premium subscription is getting another perk: access to Peacock. In an announcement on Monday, NBCUniversal says the multi-year agreement will allow Premium subscribers to stream Pea..."
   },
   {
-    "title": "The Light Flip is a minimalist flip phone with a point to prove",
-    "url": "https://www.theverge.com/gadgets/968563/light-flip-phone-price-specs",
+    "title": "Amazon&#8217;s trying to launch a global satellite cellphone network in 2028",
+    "url": "https://www.theverge.com/tech/971437/amazon-leo-direct-to-device-satellite-network",
     "source": "The Verge",
-    "summary": "This article introduces the Light Flip, a minimalist flip phone, discussing its features, price, and specs, highlighting its unique point of difference in the market.",
-    "error": false
+    "summary": "Amazon filed an FCC application on Saturday to launch a new Leo satellite constellation that will provide direct-to-device satellite service for \"voice, messaging, data, and emergency services.\" If ap..."
   },
   {
-    "title": "OpenAI's models broke containment and cyberattacked Hugging Face \u2014 what enterprises need to know",
-    "url": "https://venturebeat.com/security/openais-models-broke-containment-and-cyberattacked-hugging-face-what-enterprises-need-to-know",
+    "title": "Uh-oh: Some Claude shared conversations and Artifacts appear to be indexed and publicly accessible on Google Search",
+    "url": "https://venturebeat.com/technology/uh-oh-some-claude-shared-conversations-and-artifacts-appear-to-be-indexed-and-publicly-accessible-on-google-search",
     "source": "VentureBeat",
-    "summary": "Yesterday afternoon, OpenAI and Hugging Face published a joint disclosure outlining a cybersecurity event that redefines the threat landscape for enterprise technology. During an internal benchmark ev..."
+    "summary": "Over the weekend, Reddit user -void1 posted an alarming discovery on the r/ClaudeAI subreddit: some conversations that users of Anthropic&#x27;s Claude AI chatbot had made &quot;shareable&quot; via a ..."
   },
   {
-    "title": "Poolside drops Laguna S 2.1, an open-weight coding model that beats rivals 10x its size",
-    "url": "https://venturebeat.com/infrastructure/poolside-drops-laguna-s-2-1-an-open-weight-coding-model-that-beats-rivals-10x-its-size",
+    "title": "Why SAP says enterprise AI agents need knowledge graphs and governance",
+    "url": "https://venturebeat.com/orchestration/why-sap-says-enterprise-ai-agents-need-knowledge-graphs-and-governance",
     "source": "VentureBeat",
-    "summary": "Poolside, the San Francisco AI lab that has spent most of its three-year existence quietly selling coding models to governments and defense agencies, released its most capable model to date on Tuesday..."
+    "summary": "Presented by SAP At VB Transform 2026, Max McPhee, senior solution advisor at SAP, spoke with Rob Stretchay, lead analyst at VentureBeat Research, about what it takes for enterprises to move beyond ch..."
   },
   {
-    "title": "Smash bugs. Win prizes.",
-    "url": "https://dev.to/bugsmash?bb=263829",
+    "title": "Optimistic React UIs that don't drift from the server",
+    "url": "https://dev.to/yaseenyk04/optimistic-react-uis-that-dont-drift-from-the-server-536l",
     "source": "Dev.to",
-    "summary": "DEV is hosting a bug smash event where developers can participate and win prizes, including Sentry skateboards.",
-    "error": false
+    "summary": "I don\u2019t ship optimistic UI to make things \u201cfeel fast\u201d; I ship it because the p95 round-trip to a different region is 120\u2013250 ms and users will mash buttons if the UI stalls. The failure mode to design..."
   },
   {
-    "title": "Nuxt vs SvelteKit: What works better?",
-    "url": "https://dev.to/erikch/nuxt-vs-sveltekit-what-works-better-132h",
+    "title": "Voice Assistants Are Designed in the Silence",
+    "url": "https://dev.to/smallestai/voice-assistants-are-designed-in-the-silence-4f5m",
     "source": "Dev.to",
-    "summary": "A comparison of Nuxt and SvelteKit, two popular frameworks for building web applications, to determine which one works better.",
-    "error": false
+    "summary": "A voice assistant can be technically correct and still feel broken.\nThe failure often begins after the user finishes speaking. Nothing dramatic happens. There is simply a pause: long enough for the us..."
   },
   {
-    "title": "GKE Security Blueprint Joins Growing List of Cloud AI Frameworks",
-    "url": "https://www.infoq.com/news/2026/07/google-gke-ai-security-blueprint/",
+    "title": "Microsoft Releases .NET 11 Preview 6 With Language and Framework Updates",
+    "url": "https://www.infoq.com/news/2026/07/dotnet-11-preview-6/",
     "source": "InfoQ",
-    "summary": "Google has introduced a security blueprint for its Kubernetes Engine (GKE) to help organizations secure their cloud-based AI frameworks. The blueprint provides a set of best practices and recommendations for securing GKE deployments.",
+    "summary": "Microsoft has released .NET 11 Preview 6, which includes updates to the language and framework. This release brings several new features and improvements to the .NET ecosystem.",
     "error": false
   },
   {
-    "title": "Android Studio Quail 2 Redesigns Agent Mode, Streamlines AI-Assisted Coding",
-    "url": "https://www.infoq.com/news/2026/07/android-studio-quail-2/",
+    "title": "Netflix Details Its In-House LLM Serving Platform with Triton and vLLM",
+    "url": "https://www.infoq.com/news/2026/07/netflix-llm-platform/",
     "source": "InfoQ",
-    "summary": "Android Studio Quail 2 has been released with a redesigned agent mode that streamlines AI-assisted coding. The new version aims to improve the overall coding experience and provide more efficient AI-powered coding tools.",
-    "error": false
-  },
-  {
-    "title": "koala73 / worldmonitor",
-    "url": "https://github.com/koala73/worldmonitor",
-    "source": "GitHub Trending",
-    "summary": "Real-time global intelligence dashboard with AI-powered news aggregation, geopolitical monitoring, and infrastructure tracking in a unified situational awareness interface.",
-    "error": false
-  },
-  {
-    "title": "bojieli / ai-agent-book",
-    "url": "https://github.com/bojieli/ai-agent-book",
-    "source": "GitHub Trending",
-    "summary": "Open-source book on AI Agent design principles and engineering practices, including full text, compiled PDF, and accompanying code.",
+    "summary": "Netflix has detailed its in-house LLM serving platform, which uses Triton and vLLM to provide a scalable and efficient way to serve large language models.",
     "error": false
   }
 ]

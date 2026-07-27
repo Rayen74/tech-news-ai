@@ -6,10 +6,20 @@
     "The Verge",
     "VentureBeat",
     "Dev.to",
-    "InfoQ",
+    "InfoQ"
+  ],
+  "sources_ko": [
     "GitHub Trending"
   ],
-  "sources_ko": [],
-  "total_articles": 16,
-  "errors": []
+  "total_articles": 14,
+  "errors": [
+    {
+      "GitHub Trending": "No articles extracted (even with RSS fallback)"
+    }
+  ],
+  "database": {
+    "inserted": 10,
+    "skipped": 0,
+    "errors": []
+  }
 }
