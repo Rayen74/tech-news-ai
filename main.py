@@ -22,6 +22,7 @@ from models import TechNewsExtraction
 from scrapper import scrape_single_source
 from embeddings import generate_embeddings_batch, generate_embedding
 from database import upsert_articles, is_duplicate, normalize_url, calculate_content_hash
+from judge import judge_articles_batch
 
 # A list of standard User-Agents to rotate per run
 USER_AGENTS = [
@@ -53,47 +54,54 @@ async def test_pipeline():
     ]
 
     test_sources = {
-        "Hacker News": {
-            "url": "https://news.ycombinator.com/",
-            "rss_url": "https://hnrss.org/frontpage",
-            "css_selector": "#hnmain"
-        },
-        "TechCrunch": {
-            "url": "https://techcrunch.com/",
-            "rss_url": "https://techcrunch.com/feed/",
-            "css_selector": "main"
-        },
-        "Ars Technica": {
-            "url": "https://arstechnica.com/",
-            "rss_url": "https://feeds.arstechnica.com/arstechnica/index",
-            "css_selector": "main"
-        },
-        "The Verge": {
-            "url": "https://www.theverge.com/",
-            "rss_url": "https://www.theverge.com/rss/index.xml",
-            "css_selector": "main"
-        },
-        "VentureBeat": {
-            "url": "https://venturebeat.com/",
-            "rss_url": "https://venturebeat.com/feed/",
-            "css_selector": "main"
-        },
-        "Dev.to": {
-            "url": "https://dev.to/",
-            "rss_url": "https://dev.to/feed",
-            "css_selector": "main"
-        },
-        "InfoQ": {
-            "url": "https://www.infoq.com/",
-            "rss_url": "https://feed.infoq.com/",
-            "css_selector": "main"
-        },
-        "GitHub Trending": {
-            "url": "https://github.com/trending",
-            "rss_url": "https://github-trending-rss.cb2.workers.dev/",
-            "css_selector": "article.Box-row"
-        }
+    "Hacker News": {
+        "url": "https://news.ycombinator.com/",
+        "rss_url": "https://hnrss.org/frontpage",
+        "css_selector": "#hnmain"
+    },
+
+    "OpenAI News": {
+        "url": "https://openai.com/news/",
+        "rss_url": "https://openai.com/news/rss.xml",
+        "css_selector": "main"
+    },
+
+    "Google AI Blog": {
+        "url": "https://blog.google/technology/ai/",
+        "rss_url": "https://blog.google/feeds/posts/default",
+        "css_selector": "main"
+    },
+
+    "InfoQ": {
+        "url": "https://www.infoq.com/",
+        "rss_url": "https://feed.infoq.com/",
+        "css_selector": "main"
+    },
+
+    "arXiv AI": {
+        "url": "https://arxiv.org/list/cs.AI/recent",
+        "rss_url": "https://rss.arxiv.org/rss/cs.AI",
+        "css_selector": "main"
+    },
+
+    "GitHub Releases": {
+        "url": "https://github.blog/changelog/",
+        "rss_url": "https://github.blog/changelog/feed/",
+        "css_selector": "main"
+    },
+
+    "NVD": {
+        "url": "https://nvd.nist.gov/",
+        "rss_url": "https://nvd.nist.gov/feeds/xml/cve/misc/nvd-rss.xml",
+        "css_selector": "main"
+    },
+
+    "TechCrunch": {
+        "url": "https://techcrunch.com/",
+        "rss_url": "https://techcrunch.com/feed/",
+        "css_selector": "main"
     }
+}
 
     browser_cfg = BrowserConfig(
         headless=True,
@@ -206,7 +214,10 @@ async def test_pipeline():
                 print(f"\n📊 [Deduplication Summary] Kept {len(unique_articles)}/{len(all_articles)} unique articles.")
 
                 if unique_articles:
-                    # Step 3: Upsert unique articles to Supabase
+                    # Phase S2: LLM Judge Scoring (BF3 & F07-F11)
+                    unique_articles = judge_articles_batch(unique_articles)
+
+                    # Step 3: Upsert unique scored articles to Database
                     db_result = upsert_articles(unique_articles)
                     run_summary["database"] = db_result
                 else:

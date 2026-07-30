@@ -1,24 +1,24 @@
 {
   "sources_ok": [
     "Hacker News",
-    "TechCrunch",
-    "Ars Technica",
-    "The Verge",
-    "VentureBeat",
-    "Dev.to",
-    "InfoQ"
+    "OpenAI News",
+    "Google AI Blog",
+    "InfoQ",
+    "arXiv AI",
+    "NVD",
+    "TechCrunch"
   ],
   "sources_ko": [
-    "GitHub Trending"
+    "GitHub Releases"
   ],
   "total_articles": 14,
   "errors": [
     {
-      "GitHub Trending": "No articles extracted (even with RSS fallback)"
+      "GitHub Releases": "No articles extracted (even with RSS fallback)"
     }
   ],
   "database": {
-    "inserted": 10,
+    "inserted": 1,
     "skipped": 0,
     "errors": []
   }

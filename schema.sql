@@ -1,12 +1,13 @@
 -- ==========================================================
--- Schema for Tech News AI - Supabase (PostgreSQL + pgvector)
--- Extended with LLM Judge scores, content hash, and RPC functions.
+-- Schema for Tech News AI - Neon (PostgreSQL + pgvector)
+-- Extended with LLM Judge scores, content hash, and helper functions.
 -- ==========================================================
 
--- 1. Enable the pgvector extension for embedding storage
-CREATE EXTENSION IF NOT EXISTS vector;
+-- NOTE: Extensions (pgcrypto, vector) are created separately by
+-- _ensure_schema() in database.py with autocommit=True, because
+-- CREATE EXTENSION cannot run inside a transaction block on Neon.
 
--- 2. Create or update the articles table
+-- 1. Create or update the articles table
 CREATE TABLE IF NOT EXISTS articles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title TEXT NOT NULL,
@@ -24,15 +25,17 @@ CREATE TABLE IF NOT EXISTS articles (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 3. Create indices for fast deduplication and vector search
+-- 2. Create indices for fast deduplication and vector search
+-- HNSW index works on empty tables (unlike IVFFlat which needs training data)
+-- Drop old ivfflat index if it exists (migration from ivfflat -> hnsw)
+DROP INDEX IF EXISTS articles_embedding_idx;
 CREATE INDEX IF NOT EXISTS articles_embedding_idx
-ON articles USING ivfflat (embedding vector_cosine_ops)
-WITH (lists = 100);
+ON articles USING hnsw (embedding vector_cosine_ops);
 
 CREATE UNIQUE INDEX IF NOT EXISTS articles_url_unique_idx ON articles (url);
 CREATE UNIQUE INDEX IF NOT EXISTS articles_content_hash_idx ON articles (content_hash) WHERE content_hash IS NOT NULL;
 
--- 4. Create Postgres RPC function for Cosine Similarity Search
+-- 3. Create Postgres RPC function for Cosine Similarity Search
 CREATE OR REPLACE FUNCTION match_articles (
   query_embedding vector(768),
   match_threshold float,

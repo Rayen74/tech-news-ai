@@ -34,3 +34,20 @@ class TechNewsExtraction(BaseModel):
         articles (List[ArticleInfo]): A sequence containing all parsed ArticleInfo entities.
     """
     articles: List[ArticleInfo] = Field(description="List of tech news articles extracted from the webpage")
+
+
+class ScoredArticle(BaseModel):
+    """
+    Pydantic structure representing an article after LLM Judge scoring.
+    """
+    title: str = Field(description="The main headline or title of the news article")
+    url: str = Field(description="The absolute URL destination link to the full article")
+    source: str = Field(description="The name of the website/platform")
+    summary: str = Field(description="A brief overview summarizing what the article covers")
+    score_novelty: int = Field(description="Novelty score (0-100)")
+    score_impact: int = Field(description="Impact score (0-100)")
+    score_originality: int = Field(description="Originality score (0-100)")
+    score_viralite: int = Field(description="Virality score (0-100)")
+    score_global: int = Field(description="Composite weighted score (0-100)")
+    justification: str = Field(description="Short justification of the evaluation")
+    recommande: bool = Field(description="Whether article is recommended based on score_global >= 60")

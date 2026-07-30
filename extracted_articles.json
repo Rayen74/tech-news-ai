@@ -1,92 +1,98 @@
 [
   {
-    "title": "Kimi-K3 Releases on HuggingFace 7/27",
-    "url": "https://huggingface.co/moonshotai/Kimi-K3",
+    "title": "Physicists Solve a Muon Mystery. Now, Old Results Don't Add Up",
+    "url": "https://www.quantamagazine.org/physicists-solve-a-muon-mystery-now-old-results-dont-add-up-20260729/",
     "source": "Hacker News",
-    "summary": "Kimi-K3 has been released on HuggingFace, a platform for machine learning models, and is now available for use. The release is significant as it makes the model more accessible to developers and researchers.",
+    "summary": "Physicists have solved a long-standing mystery related to muons, and the new findings are inconsistent with previous results, prompting a re-examination of existing data.",
     "error": false
   },
   {
-    "title": "AI companies spend record sums on Washington lobbying",
-    "url": "https://www.ft.com/content/d8a5f95e-3b6d-463a-a848-c9ef8e2394db",
+    "title": "Gemini Robotics 2 brings whole body intelligence to robots",
+    "url": "https://deepmind.google/blog/gemini-robotics-2-brings-whole-body-intelligence-to-robots/",
     "source": "Hacker News",
-    "summary": "AI companies are spending record amounts on lobbying in Washington, indicating a growing influence of the industry in politics. The spending is likely aimed at shaping regulations and policies that affect the development and deployment of AI technologies.",
+    "summary": "DeepMind has introduced Gemini Robotics 2, a new robotics system that enables whole-body intelligence in robots, allowing them to learn and adapt in complex environments.",
     "error": false
   },
   {
-    "title": "Can Apple make smart glasses that aren\u2019t a constant privacy threat?",
-    "url": "https://techcrunch.com/2026/07/26/can-apple-make-smart-glasses-that-arent-a-constant-privacy-threat/",
-    "source": "TechCrunch",
-    "summary": "Apple is reportedly working on smart glasses, but concerns about privacy and data collection have raised questions about whether the company can make a product that balances functionality with user trust.",
+    "title": "Advancing the price-performance frontier with GPT 5.6",
+    "url": "https://openai.com/index/advancing-the-price-performance-frontier-with-gpt-5-6/",
+    "source": "OpenAI News",
+    "summary": "This article discusses the advancements in GPT 5.6, focusing on its improved price-performance frontier, and how it enhances overall efficiency.",
     "error": false
   },
   {
-    "title": "Google\u2019s AI search is rapidly becoming the default, new data shows",
-    "url": "https://techcrunch.com/2026/07/27/googles-ai-search-is-rapidly-becoming-the-default-new-data-shows/",
-    "source": "TechCrunch",
-    "summary": "Google's AI-powered search is gaining traction, with new data showing that it's becoming the default search engine for many users, potentially threatening the dominance of traditional search engines like Google's own.",
+    "title": "Comment deux param\u00e8tres ont tripl\u00e9 nos scores au benchmark ARC-AGI-3",
+    "url": "https://openai.com/index/how-two-settings-tripled-our-arc-agi-3-scores/",
+    "source": "OpenAI News",
+    "summary": "This article explores how adjusting two parameters significantly improved scores on the ARC-AGI-3 benchmark, highlighting the impact of these settings on AI performance.",
     "error": false
   },
   {
-    "title": "What public health professionals can learn from anti-vaccine storytelling",
-    "url": "https://arstechnica.com/health/2026/07/how-emotionally-powerful-stories-fuel-vaccine-skepticism/",
-    "source": "Ars Technica",
-    "summary": "Sometimes, compelling stories beat medical evidence."
+    "title": "I/O 2026: Welcome to the agentic Gemini era",
+    "url": "https://blog.google/innovation-and-ai/sundar-pichai-io-2026/",
+    "source": "Google AI Blog",
+    "summary": "This article discusses the latest developments from Google I/O 2026, focusing on Gemini and its capabilities to help users get more done.",
+    "error": false
   },
   {
-    "title": "Artist sues AI meme generator for selling deeply personal comic as ad template",
-    "url": "https://arstechnica.com/tech-policy/2026/07/artist-sues-ai-meme-generator-for-selling-deeply-personal-comic-as-ad-template/",
-    "source": "Ars Technica",
-    "summary": "Meme generator may have screwed up by using templates in outputs, expert says."
+    "title": "Gemini for macOS adds new natural language capabilities",
+    "url": "https://blog.google/innovation-and-ai/products/gemini-app/speak-naturally-gemini-app-mac-os/",
+    "source": "Google AI Blog",
+    "summary": "This article highlights the new natural language capabilities added to Gemini for macOS, enhancing user interaction and productivity.",
+    "error": false
   },
   {
-    "title": "YouTube Premium will include Peacock starting next year",
-    "url": "https://www.theverge.com/streaming/971452/youtube-premium-peacock-streaming-deal",
-    "source": "The Verge",
-    "summary": "YouTube's ad-free Premium subscription is getting another perk: access to Peacock. In an announcement on Monday, NBCUniversal says the multi-year agreement will allow Premium subscribers to stream Pea..."
-  },
-  {
-    "title": "Amazon&#8217;s trying to launch a global satellite cellphone network in 2028",
-    "url": "https://www.theverge.com/tech/971437/amazon-leo-direct-to-device-satellite-network",
-    "source": "The Verge",
-    "summary": "Amazon filed an FCC application on Saturday to launch a new Leo satellite constellation that will provide direct-to-device satellite service for \"voice, messaging, data, and emergency services.\" If ap..."
-  },
-  {
-    "title": "Uh-oh: Some Claude shared conversations and Artifacts appear to be indexed and publicly accessible on Google Search",
-    "url": "https://venturebeat.com/technology/uh-oh-some-claude-shared-conversations-and-artifacts-appear-to-be-indexed-and-publicly-accessible-on-google-search",
-    "source": "VentureBeat",
-    "summary": "Over the weekend, Reddit user -void1 posted an alarming discovery on the r/ClaudeAI subreddit: some conversations that users of Anthropic&#x27;s Claude AI chatbot had made &quot;shareable&quot; via a ..."
-  },
-  {
-    "title": "Why SAP says enterprise AI agents need knowledge graphs and governance",
-    "url": "https://venturebeat.com/orchestration/why-sap-says-enterprise-ai-agents-need-knowledge-graphs-and-governance",
-    "source": "VentureBeat",
-    "summary": "Presented by SAP At VB Transform 2026, Max McPhee, senior solution advisor at SAP, spoke with Rob Stretchay, lead analyst at VentureBeat Research, about what it takes for enterprises to move beyond ch..."
-  },
-  {
-    "title": "Optimistic React UIs that don't drift from the server",
-    "url": "https://dev.to/yaseenyk04/optimistic-react-uis-that-dont-drift-from-the-server-536l",
-    "source": "Dev.to",
-    "summary": "I don\u2019t ship optimistic UI to make things \u201cfeel fast\u201d; I ship it because the p95 round-trip to a different region is 120\u2013250 ms and users will mash buttons if the UI stalls. The failure mode to design..."
-  },
-  {
-    "title": "Voice Assistants Are Designed in the Silence",
-    "url": "https://dev.to/smallestai/voice-assistants-are-designed-in-the-silence-4f5m",
-    "source": "Dev.to",
-    "summary": "A voice assistant can be technically correct and still feel broken.\nThe failure often begins after the user finishes speaking. Nothing dramatic happens. There is simply a pause: long enough for the us..."
-  },
-  {
-    "title": "Microsoft Releases .NET 11 Preview 6 With Language and Framework Updates",
-    "url": "https://www.infoq.com/news/2026/07/dotnet-11-preview-6/",
+    "title": "AI-Assisted Software Development: Team Profiles and Capabilities for Putting Research into Action",
+    "url": "https://www.infoq.com/news/2026/07/AI-research-into-action/",
     "source": "InfoQ",
-    "summary": "Microsoft has released .NET 11 Preview 6, which includes updates to the language and framework. This release brings several new features and improvements to the .NET ecosystem.",
+    "summary": "InfoQ explores the potential of AI-assisted software development, highlighting team profiles and capabilities that can help put research into action.",
     "error": false
   },
   {
-    "title": "Netflix Details Its In-House LLM Serving Platform with Triton and vLLM",
-    "url": "https://www.infoq.com/news/2026/07/netflix-llm-platform/",
+    "title": "Microsoft Three-Layer LLM Routing Architecture for AI Agents on AKS",
+    "url": "https://www.infoq.com/news/2026/07/microsoft-agents-aks-routing/",
     "source": "InfoQ",
-    "summary": "Netflix has detailed its in-house LLM serving platform, which uses Triton and vLLM to provide a scalable and efficient way to serve large language models.",
+    "summary": "Microsoft introduces a three-layer LLM routing architecture for AI agents on AKS, enabling more efficient and effective AI decision-making.",
+    "error": false
+  },
+  {
+    "title": "Probing the Origins of Reasoning Performance: Representational Quality for Mathematical Problem-Solving in RL vs. SFT Fine-Tuned Models",
+    "url": "https://arxiv.org/abs/2607.26119",
+    "source": "arXiv AI",
+    "summary": "arXiv:2607.26119v1 Announce Type: new \nAbstract: Large reasoning models trained via reinforcement learning (RL) have been increasingly shown to outperform their supervised fine-tuned (SFT) counterpart..."
+  },
+  {
+    "title": "Even More Deception: Objective Misalignment in Mixed-Motive LLM Multi-Agent Systems",
+    "url": "https://arxiv.org/abs/2607.26120",
+    "source": "arXiv AI",
+    "summary": "arXiv:2607.26120v1 Announce Type: new \nAbstract: Large Language Models (LLMs)-powered multi-agent systems are increasingly deployed in mixed-motive environments, where agents operate under asymmetric ..."
+  },
+  {
+    "title": "CVSS v4.0 Support",
+    "url": "https://nvd.nist.gov/general/news/cvss-v4-0-official-support",
+    "source": "NVD",
+    "summary": "The NVD has officially announced support for CVSS v4.0, a new version of the Common Vulnerability Scoring System.",
+    "error": false
+  },
+  {
+    "title": "2.0 APIs",
+    "url": "https://nvd.nist.gov/general/news/api-20-announcements",
+    "source": "NVD",
+    "summary": "The NVD has announced the availability of version 2.0 of its APIs, which provide access to vulnerability data and other information.",
+    "error": false
+  },
+  {
+    "title": "FTC sues Hims & Hers for allegedly sharing patients\u2019 medical data with advertisers Meta and Snap",
+    "url": "https://techcrunch.com/2026/07/30/ftc-sues-hims-hers-for-allegedly-sharing-patients-medical-data-with-advertisers-meta-and-snap/",
+    "source": "TechCrunch",
+    "summary": "The FTC has sued Hims & Hers for allegedly sharing patients' medical data with advertisers, including Meta and Snap, without proper consent.",
+    "error": false
+  },
+  {
+    "title": "Microsoft is openly competing with OpenAI, Anthropic more than ever",
+    "url": "https://techcrunch.com/2026/07/29/microsoft-is-openly-competing-with-openai-anthropic-more-than-ever/",
+    "source": "TechCrunch",
+    "summary": "Microsoft is increasing its competition with OpenAI and Anthropic, indicating a significant shift in the AI landscape.",
     "error": false
   }
 ]
