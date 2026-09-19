@@ -1,14 +1,25 @@
 """
-Execution Orchestrator for Tech News AI Test Pipeline.
+Execution Orchestrator for Tech News AI Pipeline.
 
-Equipped with dynamic JSON structure normalization and Groq API targeting.
+Discovers today's tech news via the Tavily Search API (scrapper.py's
+discover_todays_live_news_tavily), then runs the same downstream pipeline
+as before: 3-layer deduplication -> Evidence-First ReAct Judge scoring ->
+Neon Postgres storage.
+
+This replaces the previous fixed-source-list + crawl4ai/Groq landing-page
+scraping approach (scrape_single_source over a hardcoded `test_sources`
+dict). That function still exists in scrapper.py if a fixed-source
+approach is needed again later, but this entry point no longer uses it —
+so a headless browser (crawl4ai/Playwright) is no longer required to run
+this script.
+
+Nothing is written to disk here (no run_summary.json, no
+extracted_articles.json) — every stage's results are only printed to the
+console. The only persistence is the Neon database upsert itself
+(upsert_articles), which is the actual point of a run.
 """
 
-import os
 import sys
-import json
-import asyncio
-import random
 
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
@@ -16,231 +27,113 @@ if sys.platform == 'win32':
 
 # pyrefly: ignore [missing-import]
 from dotenv import load_dotenv
-# pyrefly: ignore [missing-import]
-from crawl4ai import BrowserConfig, LLMConfig, AsyncWebCrawler, CrawlerRunConfig, CacheMode, LLMExtractionStrategy
-from models import TechNewsExtraction
-from scrapper import scrape_single_source
-from embeddings import generate_embeddings_batch, generate_embedding
-from database import upsert_articles, is_duplicate, normalize_url, calculate_content_hash
+from scrapper import discover_todays_live_news_tavily
+from embeddings import generate_embedding
+from database import upsert_articles, is_duplicate, normalize_url
 from judge import judge_articles_batch
-
-# A list of standard User-Agents to rotate per run
-USER_AGENTS = [
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/115.0",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/114.0",
-]
+from editorial import editorial_top_article
 
 # Load environment configurations
 load_dotenv()
 
-async def test_pipeline():
+
+def run_pipeline(query: str = None, max_results: int = None):
     """
-    Orchestrates the sequential source execution block.
+    Orchestrates one full pipeline run: discovery -> dedup -> judge -> storage.
+
+    Args:
+        query: Search query passed to Tavily. Defaults to
+            discover_todays_live_news_tavily()'s own default if None.
+        max_results: Max number of articles Tavily should return. Defaults
+            to discover_todays_live_news_tavily()'s own default if None.
     """
-    groq_key = os.getenv("GROQ_API_KEY")
-    
-    # Define primary LLM and sub-LLMs (fallbacks) via litellm/Crawl4AI
-    llm_cfgs = [
-        LLMConfig(
-            provider="groq/llama-3.3-70b-versatile",
-            api_token=groq_key
-        ),
-        LLMConfig(
-            provider="groq/llama-3.1-8b-instant",
-            api_token=groq_key
-        )
-    ]
+    print("🚀 Initializing Tech News AI Pipeline Run (Tavily Discovery)...")
 
-    test_sources = {
-    "Hacker News": {
-        "url": "https://news.ycombinator.com/",
-        "rss_url": "https://hnrss.org/frontpage",
-        "css_selector": "#hnmain"
-    },
+    discover_kwargs = {}
+    if query is not None:
+        discover_kwargs["query"] = query
+    if max_results is not None:
+        discover_kwargs["max_results"] = max_results
 
-    "OpenAI News": {
-        "url": "https://openai.com/news/",
-        "rss_url": "https://openai.com/news/rss.xml",
-        "css_selector": "main"
-    },
+    all_articles = discover_todays_live_news_tavily(**discover_kwargs)
 
-    "Google AI Blog": {
-        "url": "https://blog.google/technology/ai/",
-        "rss_url": "https://blog.google/feeds/posts/default",
-        "css_selector": "main"
-    },
+    if not all_articles:
+        print("\n⚠️ [Discovery] 0 articles discovered — check TAVILY_API_KEY and network connectivity.")
+        print("\n================ RUN COMPLETED ================")
+        print("Total articles discovered: 0")
+        print("=================================================")
+        return
 
-    "InfoQ": {
-        "url": "https://www.infoq.com/",
-        "rss_url": "https://feed.infoq.com/",
-        "css_selector": "main"
-    },
+    # ── Phase S1: Layered Deduplication + Embeddings ──
+    print(f"\n🔍 [Deduplication] Checking {len(all_articles)} discovered articles for duplicates (Layers 1-3)...")
+    unique_articles = []
 
-    "arXiv AI": {
-        "url": "https://arxiv.org/list/cs.AI/recent",
-        "rss_url": "https://rss.arxiv.org/rss/cs.AI",
-        "css_selector": "main"
-    },
+    for i, article in enumerate(all_articles):
+        title = article.get("title", "")
+        summary = article.get("summary", "")
+        url = normalize_url(article.get("url", ""))
+        combined_text = f"{title}. {summary}"
 
-    "GitHub Releases": {
-        "url": "https://github.blog/changelog/",
-        "rss_url": "https://github.blog/changelog/feed/",
-        "css_selector": "main"
-    },
+        # Step 1: Generate embedding for Layer 3 semantic check
+        print(f"  📐 [{i+1}/{len(all_articles)}] Generating embedding & checking dedup: {title[:50]}...")
+        embedding = generate_embedding(combined_text)
+        article["embedding"] = embedding
 
-    "NVD": {
-        "url": "https://nvd.nist.gov/",
-        "rss_url": "https://nvd.nist.gov/feeds/xml/cve/misc/nvd-rss.xml",
-        "css_selector": "main"
-    },
+        # Step 2: Perform 3-Layer Deduplication Check (URL -> SHA-256 Hash -> Semantic Similarity > 0.88)
+        dup_status, reason = is_duplicate(url, combined_text, embedding=embedding, threshold=0.88, day_window=30)
 
-    "TechCrunch": {
-        "url": "https://techcrunch.com/",
-        "rss_url": "https://techcrunch.com/feed/",
-        "css_selector": "main"
-    }
-}
+        if dup_status:
+            print(f"  🚫 [Duplicate Filtered] {reason}")
+        else:
+            print(f"  ✨ [Accepted] Unique article: {title[:60]}")
+            unique_articles.append(article)
 
-    browser_cfg = BrowserConfig(
-        headless=True,
-        user_agent=random.choice(USER_AGENTS)
-    )
-    
-    print("🚀 Initializing Resilient Test Run via Groq API...")
-    
-    # Structured logging state
-    run_summary = {
-        "sources_ok": [],
-        "sources_ko": [],
-        "total_articles": 0,
-        "errors": []
-    }
-    
-    try:
-        async with AsyncWebCrawler(config=browser_cfg) as crawler:
-            all_articles = []
-            semaphore = asyncio.Semaphore(2)
-            
-            async def bounded_scrape(name, urls):
-                """
-                Wraps the scraper with a concurrency limit and random delay for rate limiting.
-                """
-                async with semaphore:
-                    delay = random.uniform(1, 3)
-                    print(f"⏳ Sleeping {delay:.2f}s before scraping {name}...")
-                    await asyncio.sleep(delay)
-                    try:
-                        articles = await scrape_single_source(
-                            crawler, 
-                            name, 
-                            urls["url"], 
-                            urls["rss_url"], 
-                            llm_cfgs, 
-                            css_selector=urls.get("css_selector")
-                        )
-                        return name, articles, None
-                    except Exception as e:
-                        return name, [], str(e)
-            
-            tasks = [
-                bounded_scrape(name, urls) 
-                for name, urls in test_sources.items()
-            ]
-            results = await asyncio.gather(*tasks)
-            
-            seen_urls = set()
-            seen_titles = set()
-            
-            for name, source_articles, error in results:
-                if error:
-                    run_summary["sources_ko"].append(name)
-                    run_summary["errors"].append({name: error})
-                elif not source_articles:
-                    run_summary["sources_ko"].append(name)
-                    run_summary["errors"].append({name: "No articles extracted (even with RSS fallback)"})
-                else:
-                    run_summary["sources_ok"].append(name)
-                    for article in source_articles:
-                        url = article.get("url", "").strip()
-                        title = article.get("title", "").strip()
-                        
-                        # Deduplicate based on URL or exact title match
-                        if (url and url in seen_urls) or (title and title in seen_titles):
-                            continue
-                            
-                        if url:
-                            seen_urls.add(url)
-                        if title:
-                            seen_titles.add(title)
-                            
-                        all_articles.append(article)
-            
-            run_summary["total_articles"] = len(all_articles)
-            
-            # Persist local JSON backups
-            with open("run_summary.json", "w", encoding="utf-8") as f:
-                json.dump(run_summary, f, indent=2)
-            
-            with open("extracted_articles.json", "w", encoding="utf-8") as f:
-                json.dump(all_articles, f, indent=2)
-            
-            # ── Phase S1: Layered Deduplication + Embeddings + Supabase Storage ──
-            if all_articles:
-                print(f"\n🔍 [Deduplication] Checking {len(all_articles)} extracted articles for duplicates (Layers 1-3)...")
-                unique_articles = []
+    print(f"\n📊 [Deduplication Summary] Kept {len(unique_articles)}/{len(all_articles)} unique articles.")
 
-                for i, article in enumerate(all_articles):
-                    title = article.get("title", "")
-                    summary = article.get("summary", "")
-                    url = normalize_url(article.get("url", ""))
-                    combined_text = f"{title}. {summary}"
+    db_result = {"inserted": 0, "skipped": len(all_articles), "errors": []}
 
-                    # Step 1: Generate embedding for Layer 3 semantic check
-                    print(f"  📐 [{i+1}/{len(all_articles)}] Generating embedding & checking dedup: {title[:50]}...")
-                    embedding = generate_embedding(combined_text)
-                    article["embedding"] = embedding
+    if unique_articles:
+        # Phase S2: Evidence-First ReAct Judge Scoring
+        unique_articles = judge_articles_batch(unique_articles)
 
-                    # Step 2: Perform 3-Layer Deduplication Check (URL -> SHA-256 Hash -> Semantic Similarity > 0.88)
-                    dup_status, reason = is_duplicate(url, combined_text, embedding=embedding, threshold=0.88, day_window=30)
+        # Phase S3: Editorial Rewrite (today's single best-scoring RECOMMEND article only)
+        unique_articles = editorial_top_article(unique_articles)
 
-                    if dup_status:
-                        print(f"  🚫 [Duplicate Filtered] {reason}")
-                    else:
-                        print(f"  ✨ [Accepted] Unique article: {title[:60]}")
-                        unique_articles.append(article)
+        # Step 4: Upsert unique scored (+ rewritten, where applicable) articles to Database
+        db_result = upsert_articles(unique_articles)
 
-                print(f"\n📊 [Deduplication Summary] Kept {len(unique_articles)}/{len(all_articles)} unique articles.")
+        # Full per-article results to console
+        print("\n" + "=" * 70)
+        print("JUDGED ARTICLES")
+        print("=" * 70)
+        for r in unique_articles:
+            flag = "  ⚠️ pipeline_error" if r.get("pipeline_error") else ""
+            print(f"""
+Title:               {r.get('title')}
+Source:               {r.get('source')} (tier: {r.get('source_tier')})
+Decision:             {r.get('decision')}{flag}
+Score Global:         {r.get('score_global')}/100  (base_score: {r.get('base_score')})
+  - Impact:           {r.get('score_impact')}
+  - Substance:        {r.get('score_substance')}
+  - Practicality:     {r.get('score_practicality')}
+Verification status:  {r.get('verification_status')}
+Confidence:           {r.get('confidence')}
+Justification:        {r.get('justification')}""")
+            if "rewritten_title" in r:
+                editorial_flag = "  ⚠️ editorial_error (fallback to original text)" if r.get("editorial_error") else ""
+                print(f"""Rewritten Title:      {r.get('rewritten_title')}{editorial_flag}
+Rewritten Summary:    {r.get('rewritten_summary')}
+Editor Notes:         {r.get('editor_notes') or '(none)'}""")
+        print("=" * 70)
+    else:
+        print("ℹ️ [Database] All discovered articles were duplicates. No new database writes performed.")
 
-                if unique_articles:
-                    # Phase S2: LLM Judge Scoring (BF3 & F07-F11)
-                    unique_articles = judge_articles_batch(unique_articles)
+    print("\n================ RUN COMPLETED ================")
+    print(f"Total articles discovered: {len(all_articles)}")
+    print(f"Unique articles after dedup: {len(unique_articles)}")
+    print(f"Database upserts: {db_result['inserted']} inserted, {db_result['skipped']} skipped, {len(db_result['errors'])} errors")
+    print("=================================================")
 
-                    # Step 3: Upsert unique scored articles to Database
-                    db_result = upsert_articles(unique_articles)
-                    run_summary["database"] = db_result
-                else:
-                    print("ℹ️ [Database] All harvested articles were duplicates. No new database writes performed.")
-                    run_summary["database"] = {"inserted": 0, "skipped": len(all_articles), "errors": []}
-
-                # Re-save run_summary with DB results
-                with open("run_summary.json", "w", encoding="utf-8") as f:
-                    json.dump(run_summary, f, indent=2)
-            # ─────────────────────────────────────────────────────────────────────
-            
-            print("\n================ TEST RUN COMPLETED ================")
-            print(f"Total unique articles extracted: {len(all_articles)}")
-            if 'db_result' in dir():
-                print(f"Database upserts: {db_result['inserted']} inserted, {db_result['skipped']} skipped, {len(db_result['errors'])} errors")
-            print(f"Run Summary persisted to run_summary.json: {json.dumps(run_summary, indent=2)}")
-            print("====================================================")
-            
-    except Exception as master_error:
-        print(f"\n❌ [Fatal Browser Error] Playwright or Crawler collapsed: {str(master_error)}")
 
 if __name__ == "__main__":
-    if sys.platform == 'win32':
-        asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
-        
-    asyncio.run(test_pipeline())
+    run_pipeline()

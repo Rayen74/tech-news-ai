@@ -16,6 +16,9 @@ CREATE TABLE IF NOT EXISTS articles (
     summary TEXT,
     content_hash TEXT UNIQUE,
     embedding vector(768),
+    -- Legacy 4-criteria scoring columns (novelty/impact/originality/virality),
+    -- kept nullable for backward compatibility with rows written by the old
+    -- single-call judge.py. New rows use the 3-pillar columns below instead.
     score_novelty INT,
     score_impact INT,
     score_originality INT,
@@ -24,6 +27,21 @@ CREATE TABLE IF NOT EXISTS articles (
     justification TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- 1b. Migrate existing tables to the current 3-pillar ReAct Judge schema.
+-- Safe to run repeatedly: ADD COLUMN IF NOT EXISTS is a no-op once applied.
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS score_substance INT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS score_practicality INT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS source_tier TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS verification_status TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS confidence TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS decision TEXT;
+
+-- 1c. Editorial Rewrite stage output (editorial.py). NULL for REVIEW/REJECT
+-- articles, which are stored but never sent through editorial rewriting.
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS rewritten_title TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS rewritten_summary TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS editor_notes TEXT;
 
 -- 2. Create indices for fast deduplication and vector search
 -- HNSW index works on empty tables (unlike IVFFlat which needs training data)

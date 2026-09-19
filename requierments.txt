@@ -15,3 +15,15 @@ pgvector>=0.2.5
 
 # HTTP client for Groq embedding API calls
 httpx>=0.27.0
+
+# LangChain agent stack for the ReAct Judge (judge_agent.py, judge_tools.py)
+# langgraph is pulled in automatically as a dependency of langchain.agents.create_agent
+langchain>=1.0.0
+langchain-ollama>=0.3.0
+
+# Article body extraction used by the judge's get_article_context tool
+trafilatura>=1.8.0
+beautifulsoup4>=4.12.0
+
+# DataFrame display for the experimentation notebook (not used by any .py module yet)
+pandas>=2.0.0

@@ -307,9 +307,10 @@ def upsert_articles(articles: list[dict]) -> dict:
 
     Args:
         articles (list[dict]): List of article dicts (title, url, source, summary,
-            embedding, score_novelty, score_impact, score_originality,
-            score_viralite, score_global, justification — all optional except
-            title/url/source/summary).
+            embedding, score_impact, score_substance, score_practicality,
+            score_global, source_tier, verification_status, confidence,
+            decision, justification, rewritten_title, rewritten_summary,
+            editor_notes — all optional except title/url/source/summary).
 
     Returns:
         dict: Operation summary with counts of inserted/updated, skipped, and error messages.
@@ -346,29 +347,41 @@ def upsert_articles(articles: list[dict]) -> dict:
                         """
                         INSERT INTO articles (
                             title, url, source, summary, content_hash, embedding,
-                            score_novelty, score_impact, score_originality,
-                            score_viralite, score_global, justification
+                            score_impact, score_substance, score_practicality,
+                            score_global, source_tier, verification_status,
+                            confidence, decision, justification,
+                            rewritten_title, rewritten_summary, editor_notes
                         )
-                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                         ON CONFLICT (url) DO UPDATE SET
                             title = EXCLUDED.title,
                             source = EXCLUDED.source,
                             summary = EXCLUDED.summary,
                             content_hash = EXCLUDED.content_hash,
                             embedding = COALESCE(EXCLUDED.embedding, articles.embedding),
-                            score_novelty = COALESCE(EXCLUDED.score_novelty, articles.score_novelty),
                             score_impact = COALESCE(EXCLUDED.score_impact, articles.score_impact),
-                            score_originality = COALESCE(EXCLUDED.score_originality, articles.score_originality),
-                            score_viralite = COALESCE(EXCLUDED.score_viralite, articles.score_viralite),
+                            score_substance = COALESCE(EXCLUDED.score_substance, articles.score_substance),
+                            score_practicality = COALESCE(EXCLUDED.score_practicality, articles.score_practicality),
                             score_global = COALESCE(EXCLUDED.score_global, articles.score_global),
-                            justification = COALESCE(EXCLUDED.justification, articles.justification);
+                            source_tier = COALESCE(EXCLUDED.source_tier, articles.source_tier),
+                            verification_status = COALESCE(EXCLUDED.verification_status, articles.verification_status),
+                            confidence = COALESCE(EXCLUDED.confidence, articles.confidence),
+                            decision = COALESCE(EXCLUDED.decision, articles.decision),
+                            justification = COALESCE(EXCLUDED.justification, articles.justification),
+                            rewritten_title = COALESCE(EXCLUDED.rewritten_title, articles.rewritten_title),
+                            rewritten_summary = COALESCE(EXCLUDED.rewritten_summary, articles.rewritten_summary),
+                            editor_notes = COALESCE(EXCLUDED.editor_notes, articles.editor_notes);
                         """,
                         (
                             title, clean_url, article.get("source", "Unknown"), summary,
                             content_hash, embedding if has_embedding else None,
-                            article.get("score_novelty"), article.get("score_impact"),
-                            article.get("score_originality"), article.get("score_viralite"),
-                            article.get("score_global"), article.get("justification"),
+                            article.get("score_impact"), article.get("score_substance"),
+                            article.get("score_practicality"), article.get("score_global"),
+                            article.get("source_tier"), article.get("verification_status"),
+                            article.get("confidence"), article.get("decision"),
+                            article.get("justification"),
+                            article.get("rewritten_title"), article.get("rewritten_summary"),
+                            article.get("editor_notes"),
                         )
                     )
                 conn.commit()

@@ -5,17 +5,27 @@ This module encapsulates the asynchronous crawling utilities powered by Crawl4AI
 It configures the AI extraction strategies using standard Pydantic schemas, 
 manages isolated single-page extraction routines, and applies fault handling 
 and post-processing metadata corrections.
+
+It also includes discover_todays_live_news_tavily(), a separate discovery
+mechanism (migrated from the notebook) that finds today's tech news across
+the whole web via the Tavily Search API instead of crawling a fixed list of
+landing pages — no static source list, no LLM extraction, just real direct
+publisher URLs.
 """
 
 import json
+import os
 import sys
 import asyncio
+from datetime import datetime
+from typing import Dict, List
 
 if sys.platform == 'win32':
     sys.stdout.reconfigure(encoding='utf-8')
     sys.stderr.reconfigure(encoding='utf-8')
 # pyrefly: ignore [missing-import]
 import feedparser
+import httpx
 # pyrefly: ignore [missing-import]
 from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode, LLMExtractionStrategy
 from crawl4ai.markdown_generation_strategy import DefaultMarkdownGenerator
@@ -159,3 +169,75 @@ async def scrape_single_source(crawler: AsyncWebCrawler, source_name: str, url: 
             
     print(f"⚠️ [Exhausted] All 3 attempts failed for {source_name}. Falling back to RSS.")
     return fallback_rss_scrape(source_name, rss_url)
+
+
+def discover_todays_live_news_tavily(
+    query: str = "artificial intelligence software engineering cybersecurity cloud computing",
+    max_results: int = 5
+) -> List[Dict[str, str]]:
+    """
+    Dynamically discovers today's live tech news articles across the web via
+    the Tavily Search API. Returns real, direct publisher URLs (no
+    hardcoded/static sites, no redirects) — unlike scrape_single_source(),
+    which crawls a fixed list of landing pages.
+
+    Args:
+        query (str): Search query passed to Tavily.
+        max_results (int): Max number of articles to return.
+
+    Returns:
+        list[dict]: Article dicts with title/url/source/summary, or an empty
+        list if the request fails for any reason (network error, bad API key,
+        etc.) — this never raises, matching the resilient/degrade-gracefully
+        behavior of scrape_single_source() and fallback_rss_scrape().
+    """
+    api_key = os.getenv("TAVILY_API_KEY")
+    if not api_key:
+        print("❌ [Discovery] TAVILY_API_KEY is missing from environment. Please add it to .env.")
+        return []
+
+    payload = {
+        "api_key": api_key,
+        "query": query,
+        "topic": "news",          # Restricts strictly to journalistic/news publications
+        "days": 1,                 # Strictly published within the past 24 hours (today)
+        "max_results": max_results,
+        "include_answer": False,
+        "include_raw_content": False
+    }
+
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    print(f"🌐 [Dynamic Search API] Querying live web news for today ({today_str})...")
+    print(f'   Query: "{query}"')
+
+    try:
+        resp = httpx.post("https://api.tavily.com/search", json=payload, timeout=15.0)
+        resp.raise_for_status()
+        data = resp.json()
+    except Exception as e:
+        print(f"❌ [Discovery] Tavily Search API request failed: {e}")
+        return []
+
+    articles = []
+    for item in data.get("results", []):
+        raw_url = item.get("url", "").strip()
+        title = item.get("title", "").strip()
+        content = item.get("content", "").strip()
+
+        # Derive publisher source domain dynamically from the real URL
+        domain = raw_url.split("/")[2].replace("www.", "") if "//" in raw_url else "Web"
+
+        if raw_url and title:
+            articles.append({
+                "title": title,
+                "url": raw_url,           # Exact, real direct article URL
+                "source": domain,          # Real publisher name (e.g. reuters.com, arstechnica.com)
+                "summary": content[:300] + "..." if len(content) > 300 else content
+            })
+
+    print(f"✅ Discovered {len(articles)} fresh articles with real direct URLs from today:")
+    for i, a in enumerate(articles, 1):
+        print(f"   [{i}] {a['title'][:65]}... ({a['source']})")
+        print(f"       🔗 Real Link: {a['url']}")
+
+    return articles

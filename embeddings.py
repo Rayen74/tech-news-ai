@@ -10,8 +10,10 @@ import json
 import time
 
 if sys.platform == 'win32':
-    sys.stdout.reconfigure(encoding='utf-8')
-    sys.stderr.reconfigure(encoding='utf-8')
+    if hasattr(sys.stdout, 'reconfigure'):
+        sys.stdout.reconfigure(encoding='utf-8')
+    if hasattr(sys.stderr, 'reconfigure'):
+        sys.stderr.reconfigure(encoding='utf-8')
 
 # pyrefly: ignore [missing-import]
 import httpx
@@ -32,6 +34,18 @@ def generate_embedding(text: str, retries: int = 3) -> list[float]:
     Returns:
         A list of 768 floats representing the embedding vector.
     """
+    # Quick check if local Ollama daemon is reachable (timeout 0.5s)
+    # Avoids hanging 15-30 seconds across retries if Ollama is offline
+    try:
+        with httpx.Client(timeout=0.5) as probe:
+            probe_resp = probe.get("http://localhost:11434/")
+            if probe_resp.status_code != 200:
+                print("⚠️ [Embedding] Local Ollama not responding (probe status != 200). Returning zero vector.")
+                return [0.0] * EMBEDDING_DIM
+    except Exception:
+        # Offline or port closed
+        return [0.0] * EMBEDDING_DIM
+
     payload = {
         "model": OLLAMA_EMBED_MODEL,
         "prompt": text.strip()[:8000],
@@ -39,7 +53,7 @@ def generate_embedding(text: str, retries: int = 3) -> list[float]:
 
     for attempt in range(1, retries + 1):
         try:
-            with httpx.Client(timeout=30.0) as client:
+            with httpx.Client(timeout=10.0) as client:
                 resp = client.post(OLLAMA_EMBED_URL, json=payload)
 
             resp.raise_for_status()
@@ -55,7 +69,7 @@ def generate_embedding(text: str, retries: int = 3) -> list[float]:
         except Exception as e:
             print(f"❌ [Embedding] Error via Ollama on attempt {attempt}: {str(e)}")
             if attempt < retries:
-                time.sleep(1)
+                time.sleep(0.5)
 
     print("❌ [Embedding] All retry attempts exhausted. Returning zero vector.")
     return [0.0] * EMBEDDING_DIM

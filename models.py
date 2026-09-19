@@ -50,4 +50,4 @@ class ScoredArticle(BaseModel):
     score_viralite: int = Field(description="Virality score (0-100)")
     score_global: int = Field(description="Composite weighted score (0-100)")
     justification: str = Field(description="Short justification of the evaluation")
-    recommande: bool = Field(description="Whether article is recommended based on score_global >= 60")
+    recommande: bool = Field(description="Whether article is recommended based on score_global >= 60")
