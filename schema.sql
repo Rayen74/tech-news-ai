@@ -43,6 +43,10 @@ ALTER TABLE articles ADD COLUMN IF NOT EXISTS rewritten_title TEXT;
 ALTER TABLE articles ADD COLUMN IF NOT EXISTS rewritten_summary TEXT;
 ALTER TABLE articles ADD COLUMN IF NOT EXISTS editor_notes TEXT;
 
+-- 1d. Agent Observability & Evidence Dossier
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS provenance JSONB DEFAULT '[]'::jsonb;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS claims JSONB DEFAULT '[]'::jsonb;
+
 -- 2. Create indices for fast deduplication and vector search
 -- HNSW index works on empty tables (unlike IVFFlat which needs training data)
 -- Drop old ivfflat index if it exists (migration from ivfflat -> hnsw)

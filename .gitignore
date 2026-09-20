@@ -29,3 +29,14 @@ wheels/
 # OS Files
 .DS_Store
 Thumbs.db
+
+# Node & Frontend
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.env*
+frontend/.vercel
+node_modules/
+.next/
+*.tsbuildinfo

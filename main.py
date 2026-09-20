@@ -29,7 +29,7 @@ if sys.platform == 'win32':
 from dotenv import load_dotenv
 from scrapper import discover_todays_live_news_tavily
 from embeddings import generate_embedding
-from database import upsert_articles, is_duplicate, normalize_url
+from database import upsert_articles, is_lexical_duplicate, check_semantic_similarity, normalize_url
 from judge import judge_articles_batch
 from editorial import editorial_top_article
 
@@ -62,28 +62,50 @@ def run_pipeline(query: str = None, max_results: int = None):
         print("\n================ RUN COMPLETED ================")
         print("Total articles discovered: 0")
         print("=================================================")
-        return
+        return {
+            "status": "empty",
+            "top_article": None,
+            "articles": [],
+            "discovered_count": 0,
+            "unique_count": 0,
+            "db_result": {"inserted": 0, "skipped": 0, "errors": []},
+            "message": "0 articles discovered. Check search query or network connectivity."
+        }
 
-    # ── Phase S1: Layered Deduplication + Embeddings ──
+    # ── Phase S1: Layered Deduplication (Cheap Filters First) ──
     print(f"\n🔍 [Deduplication] Checking {len(all_articles)} discovered articles for duplicates (Layers 1-3)...")
-    unique_articles = []
+    surviving_lexical = []
 
+    # Step 1: Cheap O(1) Lexical checks (URL + SHA-256 content hash) — NO embeddings computed yet!
     for i, article in enumerate(all_articles):
         title = article.get("title", "")
         summary = article.get("summary", "")
         url = normalize_url(article.get("url", ""))
         combined_text = f"{title}. {summary}"
 
-        # Step 1: Generate embedding for Layer 3 semantic check
-        print(f"  📐 [{i+1}/{len(all_articles)}] Generating embedding & checking dedup: {title[:50]}...")
+        is_lex_dup, lex_reason = is_lexical_duplicate(url, combined_text)
+        if is_lex_dup:
+            print(f"  🚫 [{i+1}/{len(all_articles)}] [Duplicate Filtered] {lex_reason}")
+        else:
+            surviving_lexical.append(article)
+
+    print(f"  ⚡ Lexical check: {len(surviving_lexical)}/{len(all_articles)} candidates passed to semantic evaluation.")
+
+    # Step 2: Semantic check — only novel candidates incur embedding compute
+    unique_articles = []
+    for i, article in enumerate(surviving_lexical):
+        title = article.get("title", "")
+        summary = article.get("summary", "")
+        combined_text = f"{title}. {summary}"
+
+        print(f"  📐 [{i+1}/{len(surviving_lexical)}] Generating embedding & vector check: {title[:50]}...")
         embedding = generate_embedding(combined_text)
         article["embedding"] = embedding
 
-        # Step 2: Perform 3-Layer Deduplication Check (URL -> SHA-256 Hash -> Semantic Similarity > 0.88)
-        dup_status, reason = is_duplicate(url, combined_text, embedding=embedding, threshold=0.88, day_window=30)
-
-        if dup_status:
-            print(f"  🚫 [Duplicate Filtered] {reason}")
+        is_semantic_dup, match = check_semantic_similarity(embedding, threshold=0.88, day_window=30)
+        if is_semantic_dup and match:
+            sim_pct = match.get("similarity", 0.0) * 100
+            print(f"  🚫 [Duplicate Filtered] Layer 3 Duplicate: Semantic similarity {sim_pct:.1f}% > 88% with '{match.get('title')}'")
         else:
             print(f"  ✨ [Accepted] Unique article: {title[:60]}")
             unique_articles.append(article)
@@ -133,6 +155,18 @@ Editor Notes:         {r.get('editor_notes') or '(none)'}""")
     print(f"Unique articles after dedup: {len(unique_articles)}")
     print(f"Database upserts: {db_result['inserted']} inserted, {db_result['skipped']} skipped, {len(db_result['errors'])} errors")
     print("=================================================")
+
+    # Select the highest-ranked article (top pick)
+    top_article = unique_articles[0] if unique_articles else None
+
+    return {
+        "status": "success",
+        "top_article": top_article,
+        "articles": unique_articles,
+        "discovered_count": len(all_articles),
+        "unique_count": len(unique_articles),
+        "db_result": db_result,
+    }
 
 
 if __name__ == "__main__":
